@@ -1,23 +1,24 @@
-name: Dependent Workflow
-
+name: CI
 on:
-  push
-
+  push:
+    branches: [ "main" ]
 jobs:
-  test:
-    name: Test on node ${{ matrix.var1 }} 
+  job1:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        var1: ['8', '10', '12']
-
+    # Map a step output to a job output
+    outputs:
+      output1: ${{ steps.step1.outputs.a }}
+      output2: ${{ steps.step2.outputs.b }}
     steps:
-    - uses: actions/checkout@v1
-    - name: Use Node.js ${{ matrix.var1 }}
-      uses: actions/setup-node@v1
-      with:
-        node-version: ${{ matrix.var1 }}
-
-    - name: npm version
-      run: |
-        echo NPM Version ${{  matrix.var1 }}
+      - id: step1
+        run: echo "a=hello" >> "$GITHUB_OUTPUT"
+      - id: step2
+        run: echo "b=world" >> "$GITHUB_OUTPUT"
+  job2:
+    runs-on: ubuntu-latest
+    needs: job1
+    steps:
+      - env:
+          OUTPUT1: ${{needs.job1.outputs.output1}}
+          OUTPUT2: ${{needs.job1.outputs.output2}}
+        run: echo "$OUTPUT1 $OUTPUT2"
