@@ -5,19 +5,19 @@ on:
 
 jobs:
   test:
-    name: Test on node ${{ matrix.node_version }} 
+    name: Test on node ${{ matrix.var1 }} 
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node_version: ['8', '10', '12']
+        var1: ['8', '10', '12']
 
     steps:
     - uses: actions/checkout@v1
-    - name: Use Node.js ${{ matrix.node_version }}
+    - name: Use Node.js ${{ matrix.var1 }}
       uses: actions/setup-node@v1
       with:
-        node-version: ${{ matrix.node_version }}
+        node-version: ${{ matrix.var1 }}
 
     - name: npm version
       run: |
-        echo NPM Version ${{  matrix.node_version }}
+        echo NPM Version ${{  matrix.var1 }}
